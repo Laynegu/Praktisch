@@ -1,5 +1,5 @@
 import React from "react";
-import { getRandomNum } from "util/math";
+import { getRandomNum } from "@/util/math";
 
 function App() {
   return (

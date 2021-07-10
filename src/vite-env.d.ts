@@ -1,1 +1,1 @@
-/// <reference types="vite/client" />
+import "../node_modules/vite/client";

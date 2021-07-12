@@ -1,13 +1,8 @@
 import React from "react";
-import { getRandomNum } from "@/util/math";
+import PersonList from "@/components/PersonList";
 
 function App() {
-  return (
-    <>
-      <h1>hello App</h1>
-      <span>{getRandomNum(0, 100)}</span>
-    </>
-  );
+  return <PersonList />;
 }
 
 export default App;

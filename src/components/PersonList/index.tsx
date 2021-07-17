@@ -1,4 +1,4 @@
-import { useArray } from "@/hooks";
+import { useArray } from "@/hooks/useArray";
 import React from "react";
 
 interface Person {

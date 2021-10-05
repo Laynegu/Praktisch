@@ -20,7 +20,7 @@ interface RespData {
 }
 
 // 登录接口
-interface UserToken extends RespData {
+interface LoginData extends RespData {
   data: {
     user: {
       name: string;
@@ -28,4 +28,9 @@ interface UserToken extends RespData {
     };
     token: string;
   };
+}
+
+// 注册接口
+interface RegisterData extends RespData {
+
 }

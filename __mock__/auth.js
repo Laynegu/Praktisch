@@ -31,6 +31,20 @@ module.exports = (req, res, next) => {
       // 登录失败
       return unAuthResp(res, "login failed");
     }
+  } else if (method === "post" && req.path === "/register") {
+    const {username, password, avatar} = req.body;
+    console.log(password);
+    return res.status(200).json({
+      code: 200,
+      message: "register successfully",
+      data: {
+        user: {
+          name: username,
+          avatar,
+        },
+        token: TOKEN,
+      },
+    });
   } else {
     const authorization = req.get("Authorization");
     if (!authorization || authorization.indexOf("Bearer") < 0) {

@@ -1,9 +1,13 @@
 {
-  "goodlist": [
-    {
-      "id": 1,
-      "name": "apple watch",
-      "price": 1006
+  "me": {
+    "code": 200,
+    "message": "get user info successfully",
+    "data": {
+      "user": {
+        "name": "layne",
+        "avatar": ""
+      },
+      "token": "NKBJSDUWEEWCNSAE=="
     }
-  ]
+  }
 }

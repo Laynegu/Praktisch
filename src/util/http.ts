@@ -1,3 +1,6 @@
+import { useAuth } from "@/hooks/useAuth";
+import { logout } from "./jwt";
+
 const BASE_URL = "/api";
 
 interface Params {
@@ -27,7 +30,7 @@ export const qs = (data: Params): string => {
 export const http = async (
   url: string,
   config?: RequestConfig
-): Promise<Response> => {
+): Promise<RespData> => {
   let _token, _data, _customConfig;
   if (config) {
     const { token, data, ...customConfig } = config;
@@ -48,7 +51,30 @@ export const http = async (
       url += `?${qs(_data)}`;
     }
   } else {
-    _config.body = JSON.stringify(_data);
+    _config.body = JSON.stringify(_data || {});
   }
-  return window.fetch(`${BASE_URL}/${url}`, _config);
+  return await window.fetch(`${BASE_URL}/${url}`, _config).then(async response => {
+    if (response.status === 401) {
+      // 鉴权失败
+      logout();
+      return Promise.reject({
+        code: 401,
+        message: 'login failed',
+        data: {},
+      });
+    }
+    const res: RespData = await response.json();
+    if (response.ok) {
+      // 返回 2xx 状态码
+      return Promise.resolve(res);
+    }
+    // 手动抛出错误
+    return Promise.reject(res);
+  });
 };
+
+export const useHttp = () => {
+  const {user} = useAuth();
+  const token = user?.token;
+  return (...[url, config]: Parameters<typeof http>) => http(url, {token, ...config});
+}

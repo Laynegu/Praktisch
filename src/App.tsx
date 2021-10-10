@@ -1,12 +1,12 @@
 import React from "react";
-import PersonList from "@/components/PersonList";
-import { useAuth } from "./hooks/useAuth";
-import { AuthScreen } from "./pages/AuthScreen";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthScreen } from "@/pages/AuthScreen";
+import { DashBoard } from "@/pages/DashBoard";
 
 function App() {
   const { user } = useAuth();
 
-  return <>{user ? <PersonList /> : <AuthScreen />}</>;
+  return <>{user ? <DashBoard /> : <AuthScreen />}</>;
 }
 
 export default App;

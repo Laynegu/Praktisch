@@ -6,8 +6,19 @@ import path from "path";
 export default defineConfig({
   plugins: [reactRefresh()],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+    alias: [
+      { find: "@", replacement: path.resolve(__dirname, "./src") },
+      { find: /^~/, replacement: "" },
+    ],
+  },
+  css: {
+    preprocessorOptions: {
+      less: {
+        modifyVars: {
+          // 可设置自定义样式，包括字体大小，颜色，边框
+        },
+        javascriptEnabled: true,
+      },
     },
   },
   server: {

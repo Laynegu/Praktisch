@@ -5,12 +5,12 @@ import { LOGIN_TOKEN_KEY, setLoginToken } from "@/util/jwt";
 // 登录
 export const login = async (loginInfo: LoginForm): Promise<LoginData> => {
   try {
-    const res: LoginData = await http("/login", {
-      method: 'POST',
+    const res: RespData<LoginData> = await http("login", {
+      method: "POST",
       data: loginInfo,
     });
     setLoginToken(LOGIN_TOKEN_KEY, res.data.token);
-    return res;
+    return res.data;
   } catch (error: any) {
     return error;
   }
@@ -19,11 +19,11 @@ export const login = async (loginInfo: LoginForm): Promise<LoginData> => {
 // 注册
 export const register = async (user: UserInfo): Promise<RegisterData> => {
   try {
-    const res: RegisterData = await http("/register", {
-      method: 'POST',
+    const res: RespData<RegisterData> = await http("register", {
+      method: "POST",
       data: user,
     });
-    return res;
+    return res.data;
   } catch (error: any) {
     return error;
   }

@@ -1,14 +1,12 @@
 import { useAuth } from "@/hooks/useAuth";
-import React, { useState } from "react";
+import { Button, Form, Input } from "antd";
+import React from "react";
 
 export const Login: React.FC = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
   const { authLogin } = useAuth();
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleLogin = (values: any) => {
+    const { username, password } = values;
     authLogin({
       username,
       password,
@@ -16,26 +14,24 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleLogin(e)}>
-      <label htmlFor="username">用户名</label>
-      <input
-        type="text"
+    <Form name="login" onFinish={handleLogin}>
+      <Form.Item
         name="username"
-        id="username"
-        value={username}
-        onChange={(e) => setUsername(e.currentTarget.value)}
-      />
-      <br />
-      <label htmlFor="password">密码</label>
-      <input
-        type="password"
+        rules={[{ required: true, message: "请输入用户名" }]}
+      >
+        <Input type="text" placeholder="请输入用户名" />
+      </Form.Item>
+      <Form.Item
         name="password"
-        id="password"
-        value={password}
-        onChange={(e) => setPassword(e.currentTarget.value)}
-      />
-      <br />
-      <button type="submit">提交</button>
-    </form>
+        rules={[{ required: true, message: "请输入密码" }]}
+      >
+        <Input type="password" placeholder="请输入密码" />
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+          登录
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };

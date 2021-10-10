@@ -1,20 +1,20 @@
 import { login, register } from "@/api/auth";
 import { http } from "@/util/http";
 import { getLoginToken, logout } from "@/util/jwt";
-import {useMount} from "@/hooks/useMount";
+import { useMount } from "@/hooks/useMount";
 import React, { useContext, useState } from "react";
+import { message } from "antd";
 
 interface User {
   name: string;
-  avatar: string;
   token: string;
 }
 
 type LoginContext = {
   user: User | null;
-  authLogin: (loginInfo: LoginForm) => void;
+  authLogin: (loginInfo: LoginForm, callback?: ErrorHandler) => void;
   authLogout: () => void;
-  authRegister: (user: UserInfo) => void;
+  authRegister: (user: UserInfo, callback?: ErrorHandler) => void;
 };
 
 const AuthContext = React.createContext<LoginContext | null>(null);
@@ -23,34 +23,52 @@ const AuthContext = React.createContext<LoginContext | null>(null);
 const initUser = (callback: (...args: any) => void) => {
   const token = getLoginToken();
   if (token) {
-    http('/me', {token})
-    .then(({data}) => callback(data))
-    .catch(console.log);
+    http("/me", { token, method: "GET" })
+      .then(({ data }) => {
+        callback(data);
+      })
+      .catch(console.log);
   }
-}
+};
 
 export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
   const authLogin = async (loginInfo: LoginForm) => {
     try {
-      const {data: {user, token}}: LoginData = await login(loginInfo);
+      const { user, token }: LoginData = await login(loginInfo);
       setUser({
         token,
-        ...user,
+        name: user.name,
       });
+      message.success("登录成功");
     } catch (error) {
-      console.log(error);
-      setUser(null);
+      message.error("用户名或密码错误");
     }
   };
 
   const authLogout = () => logout();
 
-  const authRegister = async () => {};
+  const authRegister = async (userInfo: UserInfo) => {
+    try {
+      const { user, token }: RegisterData = await register(userInfo);
+      setUser({
+        token,
+        name: user.name,
+      });
+      message.success("注册成功");
+    } catch (error) {
+      message.error("注册失败");
+    }
+  };
 
   useMount(() => {
-    initUser(setUser);
+    initUser((data: LoginData) => {
+      setUser({
+        name: data.user.name,
+        token: data.token,
+      });
+    });
   });
 
   return (

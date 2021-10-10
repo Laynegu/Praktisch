@@ -29,10 +29,14 @@ module.exports = (req, res, next) => {
       });
     } else {
       // 登录失败
-      return unAuthResp(res, "login failed");
+      return res.status(404).json({
+        code: 404,
+        message: "login failed",
+        data: null,
+      });
     }
   } else if (method === "post" && req.path === "/register") {
-    const {username, password, avatar} = req.body;
+    const { username, password, avatar } = req.body;
     console.log(password);
     return res.status(200).json({
       code: 200,

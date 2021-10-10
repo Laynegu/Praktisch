@@ -30,7 +30,7 @@ export const qs = (data: Params): string => {
 export const http = async (
   url: string,
   config?: RequestConfig
-): Promise<RespData> => {
+): Promise<RespData<any>> => {
   let _token, _data, _customConfig;
   if (config) {
     const { token, data, ...customConfig } = config;
@@ -41,7 +41,7 @@ export const http = async (
   const _config = {
     method: "GET",
     headers: {
-      Authorization: `bearer ${_token}`,
+      Authorization: `Bearer ${_token}`,
       ["Content-Type"]: _data ? "application/json" : "",
     },
     ..._customConfig,
@@ -53,28 +53,27 @@ export const http = async (
   } else {
     _config.body = JSON.stringify(_data || {});
   }
-  return await window.fetch(`${BASE_URL}/${url}`, _config).then(async response => {
-    if (response.status === 401) {
-      // 鉴权失败
-      logout();
-      return Promise.reject({
-        code: 401,
-        message: 'login failed',
-        data: {},
-      });
-    }
-    const res: RespData = await response.json();
-    if (response.ok) {
-      // 返回 2xx 状态码
-      return Promise.resolve(res);
-    }
-    // 手动抛出错误
-    return Promise.reject(res);
-  });
+  return await window
+    .fetch(`${BASE_URL}/${url}`, _config)
+    .then(async (response) => {
+      if (response.status === 401) {
+        // 鉴权失败
+        // logout();
+        return Promise.reject();
+      }
+      const res: RespData<any> = await response.json();
+      if (response.ok) {
+        // 返回 2xx 状态码
+        return Promise.resolve(res);
+      }
+      // 手动抛出错误
+      return Promise.reject(res);
+    });
 };
 
 export const useHttp = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const token = user?.token;
-  return (...[url, config]: Parameters<typeof http>) => http(url, {token, ...config});
-}
+  return (...[url, config]: Parameters<typeof http>) =>
+    http(url, { token, ...config });
+};

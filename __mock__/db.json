@@ -4,8 +4,7 @@
     "message": "get user info successfully",
     "data": {
       "user": {
-        "name": "layne",
-        "avatar": ""
+        "name": "layne"
       },
       "token": "NKBJSDUWEEWCNSAE=="
     }

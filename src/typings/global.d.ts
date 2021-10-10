@@ -1,8 +1,7 @@
 // 用户信息 (来自注册)
 interface UserInfo {
-  name: string;
-  password: number;
-  avatar: string;
+  username: string;
+  password: string;
   email: string;
 }
 
@@ -13,24 +12,28 @@ interface LoginForm {
 }
 
 // 接口返回数据结构
-interface RespData {
+interface RespData<T> {
   code: number;
   message: string;
-  data: any;
+  data: T;
 }
 
-// 登录接口
-interface LoginData extends RespData {
-  data: {
-    user: {
-      name: string;
-      avatar: string;
-    };
-    token: string;
+// 登录接口返回数据
+interface LoginData {
+  user: {
+    name: string;
   };
+  token: string;
 }
 
-// 注册接口
-interface RegisterData extends RespData {
-
+// 注册接口返回数据
+interface RegisterData {
+  user: {
+    name: string;
+    password: string;
+    email: string;
+  };
+  token: string;
 }
+
+type ErrorHandler = (error: any) => void;

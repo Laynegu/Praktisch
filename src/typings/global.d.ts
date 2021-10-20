@@ -36,4 +36,15 @@ interface RegisterData {
   token: string;
 }
 
+// 项目列表返回数据
+interface ProjectData {
+  projectId: number;
+  name: string;
+  departmentId: number;
+  department: string;
+  ownerId: number;
+  owner: string;
+  createdAt: string;
+}
+
 type ErrorHandler = (error: any) => void;

@@ -1,46 +1,110 @@
-import { useArray } from "@/hooks/useArray";
-import React from "react";
+import { useMount } from "@/hooks/useMount";
+import { useHttp } from "@/util/http";
+import { ColumnsType } from "antd/lib/table";
+import { Input, Table, Select } from "antd";
+import React, { useState } from "react";
+import styled from "@emotion/styled";
 
-interface Person {
-  id: number;
+const { Option } = Select;
+
+interface Project {
+  key: string;
   name: string;
-  age: number;
+  department: string;
+  owner: string;
+  createdAt: string;
 }
 
-let id = 1;
+const ColunmTitle = styled.span`
+  font-weight: 600;
+  font-size: 1.6rem;
+`;
+
+const columns: ColumnsType<Project> = [
+  {
+    key: "name",
+    dataIndex: "name",
+    title: <ColunmTitle>项目</ColunmTitle>,
+    sorter: (a, b) => a.name.localeCompare(b.name),
+  },
+  {
+    key: "department",
+    dataIndex: "department",
+    title: <ColunmTitle>部门</ColunmTitle>,
+  },
+  {
+    key: "owner",
+    dataIndex: "owner",
+    title: <ColunmTitle>负责人</ColunmTitle>,
+  },
+  {
+    key: "createdAt",
+    dataIndex: "createdAt",
+    title: <ColunmTitle>创建时间</ColunmTitle>,
+    sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+  },
+];
 
 export default () => {
-  const p = [
-    {
-      id: 1,
-      name: "jame",
-      age: 37,
-    },
-  ];
+  const [data, setData] = useState<Project[]>([]);
 
-  const [persons, add, remove, clear] = useArray<Person>(p);
+  const client = useHttp();
+
+  useMount(async () => {
+    try {
+      const res: RespData<ProjectData[]> = await client("projects");
+      const projects: Project[] = res.data.map((project: ProjectData) => {
+        const { projectId, name, department, owner, createdAt } = project;
+        return {
+          key: projectId.toString(),
+          name,
+          department,
+          owner,
+          createdAt,
+        };
+      });
+      setData(projects);
+    } catch (error) {}
+  });
 
   return (
-    <div>
-      <button
-        onClick={() =>
-          add({
-            id: ++id,
-            name: "layne_" + id,
-            age: id,
-          })
-        }
-      >
-        add
-      </button>
-      <button onClick={() => remove(persons.length - 1)}>pop</button>
-      <button onClick={() => clear()}>clear</button>
-      {persons.map((person) => (
-        <div key={person.id}>
-          <span>姓名：{person.name}</span>
-          <span>年龄：{person.age}</span>
-        </div>
-      ))}
-    </div>
+    <TableContainer>
+      <TableTitle>项目列表</TableTitle>
+      <SearchBar>
+        <Input.Search placeholder={"项目名"} />
+        <Select defaultValue="负责人">
+          <Option value="" key="1">
+            fd
+          </Option>
+          <Option value="" key="2">
+            fd
+          </Option>
+          <Option value="" key="3">
+            fd
+          </Option>
+        </Select>
+      </SearchBar>
+      <Table dataSource={data} columns={columns} pagination={{ pageSize: 5 }} />
+    </TableContainer>
   );
 };
+
+const TableContainer = styled.div`
+  display: grid;
+  row-gap: 1.5rem;
+`;
+
+const TableTitle = styled.h1`
+  margin: 0;
+  padding: 0;
+  font-size: 2.4rem;
+  font-weight: 600;
+`;
+
+const SearchBar = styled.div`
+  display: flex;
+  width: 40%;
+  > :first-of-type {
+    margin-right: 1rem;
+  }
+`;
